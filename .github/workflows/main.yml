@@ -10,7 +10,7 @@ jobs:
     - name: 1. Descargar el codigo del repositorio
       uses: actions/checkout@v4
 
-    - name: 2. Configurar Python (64-bit) en la maquina virtual
+    - name: 2. Configurar Python (64-bit)
       uses: actions/setup-python@v5
       with:
         python-version: '3.9'
@@ -21,12 +21,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install opencv-python mediapipe pillow pyinstaller setuptools
 
-    - name: 4. Compilar con copia total de metadatos de MediaPipe
+    - name: 4. Parchear importacion dinamica de MediaPipe
       run: |
-        python -m PyInstaller --onefile --windowed --copy-metadata mediapipe --collect-all mediapipe "analizador copy.py"
+        powershell -Command "(Get-Content 'analizador copy.py') | ForEach-Object { $_ }; If (-not (Select-String -Pattern 'import mediapipe.solutions' -Path 'analizador copy.py')) { 'import mediapipe.solutions'; 'import mediapipe.solutions.hands' } | Set-Content 'analizador copy.py_tmp'"
+        powershell -Command "Get-Content 'analizador copy.py_tmp' | Set-Content 'analizador copy.py'"
+        powershell -Command "Remove-Item 'analizador copy.py_tmp'"
+
+    - name: 5. Compilar con PyInstaller
+      run: |
+        python -m PyInstaller --onefile --windowed --collect-all mediapipe "analizador copy.py"
         xcopy /E /I /Y assets dist\assets
 
-    - name: 5. Guardar y publicar el paquete final
+    - name: 6. Guardar y publicar el paquete final
       uses: actions/upload-artifact@v4
       with:
         name: Traductor-Windows-EXE

@@ -21,13 +21,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install opencv-python mediapipe pillow pyinstaller setuptools
 
-    - name: 4. Compilar en modo Carpeta Distribuidora (Onedir)
+    - name: 4. Compilar asignando un nombre de carpeta limpio
       run: |
-        python -m PyInstaller --onedir --windowed --collect-all mediapipe "analizador copy.py"
-        xcopy /E /I /Y assets dist\"analizador copy"\assets
+        python -m PyInstaller --onedir --windowed --name "BuscadorSenas" --collect-all mediapipe "analizador copy.py"
+        xcopy /E /I /Y assets dist\BuscadorSenas\assets
 
-    - name: 5. Guardar y publicar el paquete final
+    - name: 5. Guardar y publicar la carpeta final
       uses: actions/upload-artifact@v4
       with:
         name: Traductor-Windows-EXE
-        path: dist/"analizador copy"/
+        path: dist/BuscadorSenas/

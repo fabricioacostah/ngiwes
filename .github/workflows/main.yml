@@ -20,12 +20,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install opencv-python mediapipe pillow pyinstaller
 
-    - name: 4. Compilar el archivo .exe con PyInstaller
+    - name: 4. Compilar vinculando explicitamente MediaPipe
       run: |
-        python -m PyInstaller --onefile --windowed --add-data "assets;assets" --collect-all mediapipe "analizador copy.py"
+        python -m PyInstaller --onefile --windowed --hidden-import="mediapipe.solutions" --hidden-import="mediapipe.solutions.hands" --collect-all mediapipe "analizador copy.py"
+        xcopy /E /I /Y assets dist\assets
 
-    - name: 5. Guardar y publicar el ejecutable final
+    - name: 5. Guardar y publicar el paquete final
       uses: actions/upload-artifact@v4
       with:
         name: Traductor-Windows-EXE
-        path: dist/analizador copy.exe
+        path: dist/

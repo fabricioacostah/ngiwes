@@ -10,19 +10,20 @@ jobs:
     - name: 1. Descargar el codigo del repositorio
       uses: actions/checkout@v4
 
-    - name: 2. Configurar Python en la maquina virtual
+    - name: 2. Configurar Python (64-bit) en la maquina virtual
       uses: actions/setup-python@v5
       with:
         python-version: '3.9'
+        architecture: 'x64'
 
     - name: 3. Instalar librerias del proyecto
       run: |
         python -m pip install --upgrade pip
-        pip install opencv-python mediapipe pillow pyinstaller
+        pip install opencv-python mediapipe pillow pyinstaller setuptools
 
-    - name: 4. Compilar vinculando explicitamente MediaPipe
+    - name: 4. Compilar con copia total de metadatos de MediaPipe
       run: |
-        python -m PyInstaller --onefile --windowed --hidden-import="mediapipe.solutions" --hidden-import="mediapipe.solutions.hands" --collect-all mediapipe "analizador copy.py"
+        python -m PyInstaller --onefile --windowed --copy-metadata mediapipe --collect-all mediapipe "analizador copy.py"
         xcopy /E /I /Y assets dist\assets
 
     - name: 5. Guardar y publicar el paquete final

@@ -21,24 +21,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install opencv-python mediapipe pillow pyinstaller setuptools
 
-    - name: 4. Parchear importacion de MediaPipe usando Python
+    - name: 4. Compilar en modo Carpeta Distribuidora (Onedir)
       run: |
-        python -c "
-        with open('analizador copy.py', 'r', encoding='utf-8') as f:
-            contenido = f.read()
-        if 'import mediapipe.solutions' not in contenido:
-            parche = 'import mediapipe.solutions\nimport mediapipe.solutions.hands\n' + contenido
-            with open('analizador copy.py', 'w', encoding='utf-8') as f:
-                f.write(parche)
-        "
+        python -m PyInstaller --onedir --windowed --collect-all mediapipe "analizador copy.py"
+        xcopy /E /I /Y assets dist\"analizador copy"\assets
 
-    - name: 5. Compilar con PyInstaller
-      run: |
-        python -m PyInstaller --onefile --windowed --collect-all mediapipe "analizador copy.py"
-        xcopy /E /I /Y assets dist\assets
-
-    - name: 6. Guardar y publicar el paquete final
+    - name: 5. Guardar y publicar el paquete final
       uses: actions/upload-artifact@v4
       with:
         name: Traductor-Windows-EXE
-        path: dist/
+        path: dist/"analizador copy"/

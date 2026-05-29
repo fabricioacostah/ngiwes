@@ -21,11 +21,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install opencv-python mediapipe pillow pyinstaller setuptools
 
-    - name: 4. Parchear importacion dinamica de MediaPipe
+    - name: 4. Parchear importacion de MediaPipe usando Python
       run: |
-        powershell -Command "(Get-Content 'analizador copy.py') | ForEach-Object { $_ }; If (-not (Select-String -Pattern 'import mediapipe.solutions' -Path 'analizador copy.py')) { 'import mediapipe.solutions'; 'import mediapipe.solutions.hands' } | Set-Content 'analizador copy.py_tmp'"
-        powershell -Command "Get-Content 'analizador copy.py_tmp' | Set-Content 'analizador copy.py'"
-        powershell -Command "Remove-Item 'analizador copy.py_tmp'"
+        python -c "
+        with open('analizador copy.py', 'r', encoding='utf-8') as f:
+            contenido = f.read()
+        if 'import mediapipe.solutions' not in contenido:
+            parche = 'import mediapipe.solutions\nimport mediapipe.solutions.hands\n' + contenido
+            with open('analizador copy.py', 'w', encoding='utf-8') as f:
+                f.write(parche)
+        "
 
     - name: 5. Compilar con PyInstaller
       run: |

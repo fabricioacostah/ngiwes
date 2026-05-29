@@ -1,25 +1,22 @@
-name: Compilar Buscador de Señas para Windows
+name: Compilar Buscador de Senas para Windows
 
-on:
-  push:
-    branches: [ main, master ] # Se ejecutará automáticamente cuando subas cambios
-  workflow_dispatch: # Esto te permite activar la compilación manualmente desde la web de GitHub
+on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: windows-latest # Aquí ocurre la magia: GitHub levanta una máquina Windows real
+    runs-on: windows-latest
 
     steps:
-    - name: 1. Descargar el código del repositorio
+    - name: 1. Descargar el codigo del repositorio
       uses: actions/checkout@v4
 
-    - name: 2. Configurar Python en la máquina virtual
+    - name: 2. Configurar Python en la maquina virtual
       uses: actions/setup-python@v5
       with:
         python-version: '3.9'
-        cache: 'pip' # Acelera futuras compilaciones
+        cache: 'pip'
 
-    - name: 3. Instalar librerías del proyecto
+    - name: 3. Instalar librerias del proyecto
       run: |
         python -m pip install --upgrade pip
         pip install opencv-python mediapipe pillow pyinstaller

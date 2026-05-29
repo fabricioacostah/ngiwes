@@ -1,0 +1,32 @@
+name: Compilar Buscador de Senas para Windows
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: 1. Descargar el codigo del repositorio
+      uses: actions/checkout@v4
+
+    - name: 2. Configurar Python en la maquina virtual
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+
+    - name: 3. Instalar librerias del proyecto
+      run: |
+        python -m pip install --upgrade pip
+        pip install opencv-python mediapipe pillow pyinstaller
+
+    - name: 4. Compilar el archivo .exe con PyInstaller
+      run: |
+        python -m PyInstaller --onefile --windowed --add-data "assets;assets" --collect-all mediapipe "analizador copy.py"
+
+    - name: 5. Guardar y publicar el ejecutable final
+      uses: actions/upload-artifact@v4
+      with:
+        name: Traductor-Windows-EXE
+        path: dist/analizador copy.exe
